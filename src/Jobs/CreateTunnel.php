@@ -36,18 +36,38 @@ class CreateTunnel
             config('tunneler.local_port')
         );
 
-        $this->sshCommand = sprintf('%s %s %s -N -i %s -L %d:%s:%d -p %d %s@%s',
-            config('tunneler.ssh_path'),
-            config('tunneler.ssh_options'),
-            config('tunneler.ssh_verbosity'),
-            config('tunneler.identity_file'),
-            config('tunneler.local_port'),
-            config('tunneler.bind_address'),
-            config('tunneler.bind_port'),
-            config('tunneler.port'),
-            config('tunneler.user'),
-            config('tunneler.hostname')
-        );
+        $identityFile = config('tunneler.identity_file');
+        $password = config('tunneler.password');
+
+        if ($identityFile) {
+            $this->sshCommand = sprintf('%s %s %s -N -i %s -L %d:%s:%d -p %d %s@%s',
+                config('tunneler.ssh_path'),
+                config('tunneler.ssh_options'),
+                config('tunneler.ssh_verbosity'),
+                $identityFile,
+                config('tunneler.local_port'),
+                config('tunneler.bind_address'),
+                config('tunneler.bind_port'),
+                config('tunneler.port'),
+                config('tunneler.user'),
+                config('tunneler.hostname')
+            );
+        } else if ($password) {
+            $this->sshCommand = sprintf('sshpass -p %s %s %s %s -N -L %d:%s:%d -p %d %s@%s',
+                escapeshellarg($password),
+                config('tunneler.ssh_path'),
+                config('tunneler.ssh_options'),
+                config('tunneler.ssh_verbosity'),
+                config('tunneler.local_port'),
+                config('tunneler.bind_address'),
+                config('tunneler.bind_port'),
+                config('tunneler.port'),
+                config('tunneler.user'),
+                config('tunneler.hostname')
+            );
+        } else {
+            throw new \Exception('Either identity_file or password must be set in the configuration.');
+        }
     }
 
 

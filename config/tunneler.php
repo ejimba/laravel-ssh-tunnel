@@ -16,6 +16,7 @@ return [
     'bind_port' => env('TUNNELER_BIND_PORT'),
     
     'user' => env('TUNNELER_USER'),
+    'password' => env('TUNNELER_PASSWORD'),
     'hostname' => env('TUNNELER_HOSTNAME'),
     'port' => env('TUNNELER_PORT'),
     'wait' => env('TUNNELER_CONN_WAIT', '1000000'),
